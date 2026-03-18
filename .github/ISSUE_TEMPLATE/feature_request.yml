@@ -1,20 +1,22 @@
-name: Feature Request
-about: Yeni özellik öner
+name: Feature Request / Özellik Önerisi
+about: Suggest a feature / Yeni özellik öner
 labels: [enhancement]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: Hangi problemi çözüyor
+      label: Problem Statement / Hangi problemi çözüyor
     validations:
       required: true
+
   - type: textarea
     id: proposal
     attributes:
-      label: Önerilen çözüm
+      label: Proposed Solution / Önerilen çözüm
     validations:
       required: true
+
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatifler
+      label: Alternatives / Alternatifler

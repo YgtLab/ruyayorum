@@ -1,35 +1,63 @@
-# Security Policy / Güvenlik Politikası
+# Security Policy
 
-## Supported Branch / Desteklenen Dal
+<details open>
+<summary><strong>🇹🇷 Türkçe</strong></summary>
 
+## Desteklenen Dal
 - `main`
 
-## Reporting a Vulnerability / Açık Bildirimi
+## Güvenlik Açığı Bildirimi
+Public issue açmadan önce özel bildirim yap.
 
-TR: Public issue açmadan önce özel bildirim yap.  
-EN: Please report vulnerabilities privately before opening a public issue.
+- İletişim: `iletisim@ruyayorum.app`
 
-- Contact/İletişim: `iletisim@ruyayorum.app`
+Rapora şunları ekle:
+1. Etkilenen endpoint/ekran
+2. Yeniden üretim adımları
+3. Beklenen ve gerçek davranış
+4. Etki seviyesi
 
-Include / Rapora ekleyin:
+## Yanıt Hedefleri
+- İlk geri dönüş: 72 saat
+- Kritik değerlendirme: 7 gün
 
-1. Affected endpoint/page (Etkilenen endpoint/ekran)
-2. Reproduction steps (Yeniden üretim adımları)
-3. Expected vs actual behavior (Beklenen/gerçek davranış)
-4. Impact level (Etki seviyesi)
+## Sorumlu Açıklama
+Açık doğrulanmadan public paylaşım yapılmamalı.
 
-## Response Targets / Yanıt Hedefleri
+## Güvenlik Notları
+- Public release öncesi tüm gerçek secret değerlerini rotate et.
+- `.env` dosyasını asla commit etme.
+- Kritik aksiyonlar audit log ile izlenir.
 
-- First response / İlk geri dönüş: 72 hours
-- Critical triage / Kritik değerlendirme: 7 days
+</details>
 
-## Responsible Disclosure / Sorumlu Açıklama
+<details>
+<summary><strong>🇬🇧 English</strong></summary>
 
-TR: Açık doğrulanmadan public paylaşım yapılmamalı.  
-EN: Do not publicly disclose before validation and fix.
+## Supported Branch
+- `main`
 
-## Security Notes / Güvenlik Notları
+## Reporting a Vulnerability
+Please report vulnerabilities privately before opening a public issue.
 
-- Rotate all secrets before public release.
+- Contact: `iletisim@ruyayorum.app`
+
+Include the following:
+1. Affected endpoint/page
+2. Reproduction steps
+3. Expected vs actual behavior
+4. Impact level
+
+## Response Targets
+- First response: 72 hours
+- Critical triage: 7 days
+
+## Responsible Disclosure
+Do not publicly disclose before validation and fix.
+
+## Security Notes
+- Rotate all real secrets before public release.
 - Never commit `.env`.
-- Audit logs are used for sensitive account/admin actions.
+- Audit logs are used for sensitive actions.
+
+</details>

@@ -1,35 +1,39 @@
-name: Bug Report
-about: Bir hatayı raporla
+name: Bug Report / Hata Bildirimi
+about: Report a bug / Bir hatayı raporla
 labels: [bug]
 body:
   - type: textarea
     id: summary
     attributes:
-      label: Özet
-      description: Sorunu kısa ve net anlat
+      label: Summary / Özet
+      description: Briefly explain the issue / Sorunu kısa ve net anlat
     validations:
       required: true
+
   - type: textarea
     id: steps
     attributes:
-      label: Yeniden üretim adımları
-      description: Adım adım yaz
+      label: Steps to Reproduce / Yeniden Üretim Adımları
+      description: Write step by step / Adım adım yaz
     validations:
       required: true
+
   - type: textarea
     id: expected
     attributes:
-      label: Beklenen davranış
+      label: Expected Behavior / Beklenen Davranış
     validations:
       required: true
+
   - type: textarea
     id: actual
     attributes:
-      label: Gerçek davranış
+      label: Actual Behavior / Gerçek Davranış
     validations:
       required: true
+
   - type: input
     id: env
     attributes:
-      label: Ortam
-      description: OS, Node sürümü, tarayıcı
+      label: Environment / Ortam
+      description: OS, Node version, browser / OS, Node sürümü, tarayıcı

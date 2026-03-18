@@ -1,23 +1,21 @@
-## Özet
+## Summary / Özet
+Describe what this PR changes and why.
+Bu PR'ın neyi neden değiştirdiğini açıkla.
 
-Bu PR neyi çözüyor, kısaca açıkla.
-
-## Değişiklik Türü
-
+## Type of Change / Değişiklik Türü
 - [ ] Bug fix
-- [ ] Yeni özellik
+- [ ] New feature / Yeni özellik
 - [ ] Refactor
-- [ ] Dokümantasyon
-- [ ] Güvenlik
+- [ ] Documentation / Dokümantasyon
+- [ ] Security / Güvenlik
 
-## Kontrol Listesi
+## Checklist / Kontrol Listesi
+- [ ] `npm run lint` passed / geçti
+- [ ] `npm test` passed / geçti
+- [ ] No breaking change / Geriye dönük kırılma yok
+- [ ] Documentation updated if needed / Gerekliyse dokümantasyon güncellendi
+- [ ] Security impact reviewed / Güvenlik etkisi değerlendirildi
 
-- [ ] `npm run lint` geçti
-- [ ] `npm test` geçti
-- [ ] Geriye dönük kırılma yok
-- [ ] Gerekliyse dokümantasyon güncellendi
-- [ ] Güvenlik etkisi değerlendirildi
-
-## Ekran Görüntüsü / Notlar
-
-Varsa ekle.
+## Screenshots / Notes / Ekran Görüntüsü / Notlar
+Add screenshots or extra context if needed.
+Gerekirse ekran görüntüsü veya ek bilgi ekle.

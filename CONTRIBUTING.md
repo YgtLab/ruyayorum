@@ -1,58 +1,91 @@
-# Contributing Guide / Katkı Rehberi
+# Contributing Guide
 
-TR: Katkıların için teşekkürler.  
-EN: Thanks for contributing.
+<details open>
+<summary><strong>🇹🇷 Türkçe</strong></summary>
 
-## Contribution Types / Katkı Türleri
-
+## Katkı Türleri
 - Bug fix
-- Feature
+- Yeni özellik
 - Refactor
-- Documentation
-- Test improvements
+- Dokümantasyon
+- Test iyileştirmesi
 
-## Before You Start / Başlamadan Önce
+## Başlamadan Önce
+1. Yeni bir issue aç veya mevcut issue'yu sahiplen.
+2. Ayrı bir branch oluştur.
+3. Değişiklikleri küçük ve odaklı tut.
 
-1. TR: Issue aç veya mevcut issue’yu sahiplen.  
-   EN: Open an issue or claim an existing one.
-2. TR: Yeni bir branch oluştur.  
-   EN: Create a dedicated branch.
-3. TR: Değişikliği küçük ve odaklı tut.  
-   EN: Keep changes focused and small.
-
-## Local Setup / Lokal Kurulum
-
+## Lokal Kurulum
 ```bash
 cp .env.example .env
 npm install
 npm run dev
 ```
 
-## Quality Checks / Kalite Kontrolleri
-
+## Kalite Kontrolleri
 ```bash
 npm run lint
 npm test
 ```
+PR açmadan önce bu iki komutun başarılı olması beklenir.
 
-TR/EN: PR açmadan önce bu iki komutun başarılı olması beklenir.
+## PR Kuralları
+- PR açıklamasında neyi neden değiştirdiğini net yaz.
+- Kırıcı değişiklik varsa özellikle belirt.
+- UI değişikliği varsa ekran görüntüsü ekle.
 
-## Pull Request Rules / PR Kuralları
-
-- TR: PR açıklaması net olsun (ne değişti / neden).  
-  EN: Keep PR description clear (what changed / why).
-- TR: Kırıcı değişiklik varsa özellikle belirt.  
-  EN: Explicitly mention breaking changes.
-- TR: UI değişikliği varsa ekran görüntüsü ekle.  
-  EN: Add screenshots for UI changes.
-
-## Commit Convention
-
-Preferred prefixes:
-
+## Commit Formatı
+Önerilen prefixler:
 - `feat:`
 - `fix:`
 - `refactor:`
 - `docs:`
 - `test:`
 - `chore:`
+
+</details>
+
+<details>
+<summary><strong>🇬🇧 English</strong></summary>
+
+## Contribution Types
+- Bug fix
+- Feature
+- Refactor
+- Documentation
+- Test improvements
+
+## Before You Start
+1. Open a new issue or claim an existing one.
+2. Create a dedicated branch.
+3. Keep changes focused and small.
+
+## Local Setup
+```bash
+cp .env.example .env
+npm install
+npm run dev
+```
+
+## Quality Checks
+```bash
+npm run lint
+npm test
+```
+These two commands must pass before opening a PR.
+
+## PR Rules
+- Clearly explain what changed and why.
+- Explicitly mention breaking changes.
+- Add screenshots for UI changes.
+
+## Commit Convention
+Recommended prefixes:
+- `feat:`
+- `fix:`
+- `refactor:`
+- `docs:`
+- `test:`
+- `chore:`
+
+</details>
