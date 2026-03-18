@@ -1,24 +1,23 @@
 # RüyaYorum
 
-TR: Modern ve güvenli bir rüya yorum platformu.  
-EN: A modern and secure dream interpretation platform.
+Modern ve güvenli bir rüya yorum platformu.  
+A modern and secure dream interpretation platform.
 
-## Overview / Genel Bakış
+<details open>
+<summary><strong>🇹🇷 Türkçe</strong></summary>
 
-TR: RüyaYorum; psikolojik ve dini yorum modları, kullanıcı hesabı, 2FA, admin paneli, destek talepleri ve PWA desteği sunar.  
-EN: RüyaYorum provides psychological/religious interpretation modes, user accounts, 2FA, admin panel, support tickets, and PWA support.
+## Genel Bakış
+RüyaYorum; psikolojik ve dini yorum modları, kullanıcı hesabı, 2FA, admin paneli, destek talepleri ve PWA desteği sunar.
 
-## Features / Özellikler
+## Özellikler
+- Psikolojik ve dini yorum modu
+- Kayıt, giriş, email doğrulama, şifre sıfırlama
+- 2FA + recovery code + session management
+- Admin paneli ve audit log
+- Ticket sistemi + dosya eki
+- PWA (offline ekran dahil)
 
-- TR: Psikolojik ve dini yorum modu | EN: Psychological and religious interpretation modes
-- TR: Kayıt, giriş, email doğrulama, şifre sıfırlama | EN: Register, login, email verification, password reset
-- TR: 2FA + recovery code + session management | EN: 2FA + recovery codes + session management
-- TR: Admin paneli ve audit log | EN: Admin panel and audit logging
-- TR: Ticket sistemi + dosya eki | EN: Ticketing system + file attachments
-- TR: PWA (offline ekran dahil) | EN: PWA (including offline screen)
-
-## Quick Start / Hızlı Başlangıç
-
+## Hızlı Başlangıç
 ```bash
 git clone <repo-url>
 cd ruyayorum
@@ -27,32 +26,70 @@ npm install
 npm run dev
 ```
 
-- TR: Uygulama: `http://localhost:3000`
-- EN: App URL: `http://localhost:3000`
+Uygulama: `http://localhost:3000`
 
-## Scripts / Komutlar
+## Komutlar
+- `npm run dev` - Geliştirme
+- `npm start` - Production başlatma
+- `npm run lint` - Syntax kontrolü
+- `npm test` - Testler
 
-- `npm run dev` - TR: Geliştirme | EN: Development mode
-- `npm start` - TR: Production başlatma | EN: Production start
-- `npm run lint` - TR: Syntax kontrolü | EN: Syntax check
-- `npm test` - TR: Testler | EN: Tests
+## API Sürümleme
+- Aktif: `/api/v1/*`
+- Eski: `/api/auth/*`, `/api/yorum/*`, `/api/admin/*` (`410` döner)
 
-## API Versioning / API Sürümleme
+## Ortam Değişkenleri
+Tüm alanlar `.env.example` dosyasında açıklanmıştır.
 
-- Active/Aktif: `/api/v1/*`
-- Deprecated/Eski: `/api/auth/*`, `/api/yorum/*`, `/api/admin/*` (returns `410`)
+## Güvenlik
+Public yapmadan önce tüm gerçek anahtarları rotate et.
 
-## Environment Variables / Ortam Değişkenleri
+</details>
 
-TR/EN: Tüm alanlar `.env.example` dosyasında açıklanmıştır.
+<details>
+<summary><strong>🇬🇧 English</strong></summary>
 
-## Security / Güvenlik
+## Overview
+RüyaYorum provides psychological/religious interpretation modes, user accounts, 2FA, admin panel, support tickets, and PWA support.
 
-TR: Public yapmadan önce tüm gerçek anahtarları rotate et.  
-EN: Rotate all real secrets before making the repository public.
+## Features
+- Psychological and religious interpretation modes
+- Register, login, email verification, password reset
+- 2FA + recovery codes + session management
+- Admin panel and audit logging
+- Ticketing system + file attachments
+- PWA support (including offline screen)
+
+## Quick Start
+```bash
+git clone <repo-url>
+cd ruyayorum
+cp .env.example .env
+npm install
+npm run dev
+```
+
+App URL: `http://localhost:3000`
+
+## Scripts
+- `npm run dev` - Development mode
+- `npm start` - Production start
+- `npm run lint` - Syntax check
+- `npm test` - Tests
+
+## API Versioning
+- Active: `/api/v1/*`
+- Deprecated: `/api/auth/*`, `/api/yorum/*`, `/api/admin/*` (returns `410`)
+
+## Environment Variables
+All fields are documented in `.env.example`.
+
+## Security
+Rotate all real secrets before making the repository public.
+
+</details>
 
 ## Documentation / Dokümantasyon
-
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [docs/API.md](docs/API.md)
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
@@ -61,5 +98,4 @@ EN: Rotate all real secrets before making the repository public.
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## License / Lisans
-
 MIT - [LICENSE](LICENSE)
