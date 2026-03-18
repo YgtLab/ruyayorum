@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <title>RüyaYorum - Profil</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+
+  <main class="container" style="padding-top:30px; padding-bottom:30px;">
+    <section class="section glass">
+      <div class="row">
+        <h2 style="margin:0;">Profilim</h2>
+        <a class="btn btn-secondary" href="/">Ana Sayfa</a>
+      </div>
+      <p id="profileInfo" style="color:var(--muted); margin:10px 0 0;">Yükleniyor...</p>
+    </section>
+
+    <section class="section glass profile-grid">
+      <article class="profile-card">
+        <h3>Hesap Ayarları</h3>
+        <form id="profileForm" class="profile-form">
+          <label>Ad
+            <input id="adInput" required />
+          </label>
+          <label>Email
+            <input id="emailInput" disabled />
+          </label>
+          <button class="btn btn-main" type="submit">Kaydet</button>
+        </form>
+      </article>
+
+      <article class="profile-card">
+        <h3>Şifre Değiştir</h3>
+        <form id="passwordForm" class="profile-form">
+          <label>Mevcut Şifre
+            <input id="oldPass" type="password" required />
+          </label>
+          <label>Yeni Şifre
+            <input id="newPass" type="password" minlength="8" required />
+          </label>
+          <button class="btn btn-secondary" type="submit">Şifreyi Güncelle</button>
+        </form>
+      </article>
+
+      <article class="profile-card">
+        <h3>2FA Güvenlik</h3>
+        <p id="twoFaStatus" style="color:var(--muted); margin-top:0;">Durum yükleniyor...</p>
+        <div id="twoFaSetup" class="hidden">
+          <img id="twoFaQr" alt="2FA QR" style="max-width:220px; border-radius:10px; border:1px solid var(--border);" />
+          <p id="twoFaMask" style="color:var(--muted);"></p>
+          <form id="twoFaEnableForm" class="profile-form">
+            <label>Doğrulama Kodu
+              <input id="twoFaEnableCode" required />
+            </label>
+            <button class="btn btn-secondary" type="submit">2FA Etkinleştir</button>
+          </form>
+        </div>
+        <button class="btn btn-main" id="twoFaBeginBtn" type="button">2FA Kurulumu Başlat</button>
+        <form id="twoFaDisableForm" class="profile-form hidden" style="margin-top:10px;">
+          <label>2FA Kodu ile Kapat
+            <input id="twoFaDisableCode" />
+          </label>
+          <button class="btn btn-secondary" type="submit">2FA Kapat</button>
+        </form>
+        <div id="recoveryStatus" style="margin-top:10px; color:var(--muted);">Yedek kodlar yükleniyor...</div>
+        <form id="recoveryRegenerateForm" class="profile-form hidden" style="margin-top:10px;">
+          <label>2FA Kodu ile Yedek Kodları Yenile
+            <input id="recoveryCodeInput" />
+          </label>
+          <button class="btn btn-secondary" type="submit">Yedek Kodları Yenile</button>
+        </form>
+        <div id="recoveryCodesBox" class="hidden" style="margin-top:10px;">
+          <p style="color:var(--gold); margin:0 0 6px;">Tek seferlik yedek kodların (kaydet):</p>
+          <pre id="recoveryCodesText" style="white-space:pre-wrap; font-family:monospace; background:rgba(8,8,20,.45); border:1px solid var(--border); border-radius:10px; padding:10px;"></pre>
+          <button class="btn btn-secondary" id="downloadRecoveryBtn" type="button">Kodları İndir (.txt)</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="section glass">
+      <h2>Aktif Oturumlar</h2>
+      <div id="sessionsList" class="history-list"></div>
+    </section>
+
+    <section class="section glass">
+      <h2>Geçmiş Yorumlarım</h2>
+      <div id="myHistory" class="history-list"></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="profile.js"></script>
+</body>
+</html>

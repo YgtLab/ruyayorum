@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <title>RüyaYorum Admin</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+  <main class="container" style="padding-top:30px;">
+    <section class="section glass">
+      <h2>Admin Paneli</h2>
+      <div class="grid-3" id="statsGrid"></div>
+    </section>
+
+    <section class="section glass">
+      <h2>Kullanıcılar</h2>
+      <p id="usersInfo" style="margin:0 0 10px;color:var(--muted);font-size:.9rem;">Yükleniyor...</p>
+      <div class="row" style="margin-bottom:10px;">
+        <input id="searchEmail" placeholder="Email ara" style="padding:10px;border-radius:10px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <button id="searchBtn" class="btn btn-secondary" type="button">Ara</button>
+      </div>
+      <div style="overflow:auto;">
+        <table style="width:100%; border-collapse: collapse; color:var(--text);">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding:8px;">Email</th>
+              <th style="text-align:left; padding:8px;">Rol</th>
+              <th style="text-align:left; padding:8px;">Plan</th>
+              <th style="text-align:left; padding:8px;">Aktif</th>
+              <th style="text-align:left; padding:8px;">İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="userRows"></tbody>
+        </table>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button id="prevPage" class="btn btn-secondary" type="button">Önceki</button>
+        <span id="pageLabel">Sayfa 1</span>
+        <button id="nextPage" class="btn btn-secondary" type="button">Sonraki</button>
+      </div>
+    </section>
+
+    <section class="section glass">
+      <h2>Kullanıcı Detayı</h2>
+      <div id="userDetailBox" class="history-list">
+        <article class="history-item"><div class="history-text">Detay görmek için tablodan bir kullanıcı seç.</div></article>
+      </div>
+    </section>
+
+    <section class="section glass">
+      <h2>Audit Log</h2>
+      <div id="auditRows" class="history-list">
+        <article class="history-item"><div class="history-text">Yükleniyor...</div></article>
+      </div>
+    </section>
+
+    <section class="section glass">
+      <h2>Ticket Yönetimi</h2>
+      <div class="row" style="margin-bottom:10px;">
+        <input id="ticketSearch" placeholder="Konu ara" style="padding:10px;border-radius:10px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <select id="ticketStatus" style="padding:10px;border-radius:10px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);">
+          <option value="">Tüm Durumlar</option>
+          <option value="open">Açık</option>
+          <option value="closed">Kapalı</option>
+        </select>
+        <select id="ticketPriority" style="padding:10px;border-radius:10px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);">
+          <option value="">Tüm Öncelikler</option>
+          <option value="low">Low</option>
+          <option value="normal">Normal</option>
+          <option value="high">High</option>
+        </select>
+        <button id="ticketFilterBtn" class="btn btn-secondary" type="button">Filtrele</button>
+      </div>
+      <div id="adminTickets" class="history-list">
+        <article class="history-item"><div class="history-text">Yükleniyor...</div></article>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button id="ticketPrevPage" class="btn btn-secondary" type="button">Önceki</button>
+        <span id="ticketPageLabel">Sayfa 1</span>
+        <button id="ticketNextPage" class="btn btn-secondary" type="button">Sonraki</button>
+      </div>
+      <div id="adminTicketDetail" class="history-list" style="margin-top:12px;">
+        <article class="history-item"><div class="history-text">Bir ticket seç.</div></article>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="admin.js"></script>
+</body>
+</html>

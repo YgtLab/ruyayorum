@@ -1,0 +1,53 @@
+{
+  "name": "ruyayorum",
+  "version": "1.0.0",
+  "description": "RüyaYorum: güvenli ve modern rüya yorum platformu (Node.js + Express + MongoDB)",
+  "license": "MIT",
+  "author": "RüyaYorum Contributors",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "lint": "find server frontend -name '*.js' -print0 | xargs -0 -n1 node --check",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bullmq": "^5.71.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.0.0",
+    "express-validator": "^7.0.0",
+    "helmet": "^7.0.0",
+    "ioredis": "^5.10.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^8.0.0",
+    "multer": "^2.1.1",
+    "otplib": "^13.3.0",
+    "qrcode": "^1.5.4",
+    "resend": "^2.0.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "nodemon": "^3.0.1",
+    "supertest": "^7.2.2"
+  },
+  "keywords": [
+    "dream",
+    "ruya",
+    "nodejs",
+    "express",
+    "mongodb",
+    "ai",
+    "groq",
+    "pwa",
+    "auth",
+    "admin-panel"
+  ]
+}

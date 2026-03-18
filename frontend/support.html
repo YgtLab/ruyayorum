@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <title>RüyaYorum - Destek</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+
+  <main class="container" style="padding-top:30px; padding-bottom:30px;">
+    <section class="section glass">
+      <div class="row">
+        <h2 style="margin:0;">Destek Merkezi</h2>
+        <a class="btn btn-secondary" href="/">Ana Sayfa</a>
+      </div>
+      <p style="color:var(--muted);">Sorununu bize ticket olarak iletebilirsin.</p>
+    </section>
+
+    <section class="section glass profile-grid">
+      <article class="profile-card">
+        <h3>Yeni Ticket</h3>
+        <form id="ticketForm" class="profile-form">
+          <label>Konu
+            <input id="ticketSubject" required />
+          </label>
+          <label>Kategori
+            <select id="ticketCategory">
+              <option value="genel">Genel</option>
+              <option value="hesap">Hesap</option>
+              <option value="odeme">Ödeme</option>
+              <option value="teknik">Teknik</option>
+            </select>
+          </label>
+          <label>Mesaj
+            <textarea id="ticketMessage" maxlength="1200" required></textarea>
+          </label>
+          <label>Ek Dosya (opsiyonel)
+            <input id="ticketFiles" type="file" multiple />
+          </label>
+          <button class="btn btn-main" type="submit">Gönder</button>
+        </form>
+      </article>
+
+      <article class="profile-card">
+        <h3>Ticket Listem</h3>
+        <div id="ticketList" class="history-list"></div>
+      </article>
+    </section>
+
+    <section class="section glass">
+      <h2>Ticket Detayı</h2>
+      <div id="ticketDetail" class="history-list">
+        <article class="history-item"><div class="history-text">Detay görmek için soldan bir ticket seç.</div></article>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="support.js"></script>
+</body>
+</html>

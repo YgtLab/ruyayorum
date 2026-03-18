@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <title>RüyaYorum - Giriş/Kayıt</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+  <main class="container" style="padding-top:40px; max-width:700px;">
+    <section class="section glass" id="authSection">
+      <h2>Hesabın</h2>
+      <div class="yorum-tipi" style="margin-bottom:14px;">
+        <button class="btn btn-tip aktif" id="tabGiris" type="button">Giriş</button>
+        <button class="btn btn-tip" id="tabKayit" type="button">Kayıt</button>
+      </div>
+
+      <form id="formGiris" class="tool-grid">
+        <input id="girisEmail" type="email" placeholder="Email" required style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <input id="girisSifre" type="password" placeholder="Şifre" required style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <input id="giris2fa" type="text" inputmode="numeric" placeholder="2FA kodu (opsiyonel)" style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <input id="girisRecovery" type="text" placeholder="Yedek kurtarma kodu (opsiyonel)" style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <div class="row" style="justify-content:space-between;">
+          <button class="btn btn-main" type="submit">Giriş Yap</button>
+          <button class="btn btn-secondary" id="forgotBtn" type="button">Şifremi Unuttum</button>
+        </div>
+      </form>
+
+      <form id="formForgot" class="tool-grid hidden">
+        <input id="forgotEmail" type="email" placeholder="Kayıtlı email" required style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <div class="row" style="justify-content:space-between;">
+          <button class="btn btn-main" type="submit">Sıfırlama Linki Gönder</button>
+          <button class="btn btn-secondary" id="backToLoginBtn" type="button">Geri Dön</button>
+        </div>
+      </form>
+
+      <form id="formKayit" class="tool-grid hidden">
+        <input id="kayitAd" type="text" placeholder="Ad Soyad" required style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <input id="kayitEmail" type="email" placeholder="Email" required style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <input id="kayitSifre" type="password" placeholder="Şifre (min 8, büyük/küçük harf + rakam)" required style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <button class="btn btn-main" type="submit">Kayıt Ol</button>
+      </form>
+
+      <p id="authMsg" style="margin-top:14px;color:var(--muted);"></p>
+      <div id="profilBox" class="glass hidden" style="padding:14px; margin-top:16px;"></div>
+    </section>
+
+    <section class="section glass hidden" id="resetSection">
+      <h2>Yeni Şifre Belirle</h2>
+      <form id="formReset" class="tool-grid">
+        <input id="resetPassword" type="password" placeholder="Yeni şifre (min 8, büyük/küçük harf + rakam)" required style="padding:12px;border-radius:12px;border:1px solid var(--border);background:rgba(8,8,20,0.45);color:var(--text);" />
+        <button class="btn btn-main" type="submit">Şifreyi Güncelle</button>
+      </form>
+      <p id="resetMsg" style="margin-top:14px;color:var(--muted);"></p>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+</body>
+</html>

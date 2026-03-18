@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <title>RüyaYorum - Rüya Yorumlayıcı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E%F0%9F%94%AE%3C/text%3E%3C/svg%3E" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <nav class="navbar glass">
+      <div class="logo">🔮 RüyaYorum</div>
+      <button class="btn btn-pro" id="proTopBtn" type="button">Pro'ya Geç</button>
+    </nav>
+
+    <header class="hero glass">
+      <h1>Rüyalarının Sırrını Keşfet</h1>
+      <p>Yapay zeka destekli derin rüya yorumu. Sembolleri, duyguları ve iç sesini birlikte okuyalım.</p>
+    </header>
+
+    <section class="section glass symbol-card" id="symbolCard" title="Sembolü rüya metnine eklemek için tıkla">
+      <h2 class="symbol-title">🌙 Günün Sembolü</h2>
+      <p id="symbolText">Yükleniyor...</p>
+    </section>
+
+    <section class="section glass" id="yorum-araci">
+      <h2>Rüya Yorum Aracı</h2>
+      <div class="status-line" id="hakDurumu">Günlük hak: <strong>2</strong>/2</div>
+      <div class="tool-grid">
+        <div class="yorum-tipi">
+          <button class="btn btn-tip aktif" id="btnPsikolojik" type="button">🧠 Psikolojik</button>
+          <button class="btn btn-tip" id="btnDini" type="button">🕌 Dini</button>
+        </div>
+        <textarea id="dreamInput" maxlength="500" placeholder="Rüyanı buraya yaz..."></textarea>
+        <div class="row">
+          <div class="row-left">
+            <div class="counter" id="charCounter">0/500 karakter</div>
+            <button class="btn btn-secondary sample-btn" id="sampleBtn" type="button">✨ Örnek</button>
+          </div>
+          <button class="btn btn-main" id="interpretBtn" type="button">🔮 Rüyamı Yorumla</button>
+        </div>
+        <div class="loader" id="loader"><span class="mystic-spinner"></span><span>Mistik çözümleme hazırlanıyor...</span></div>
+        <article class="result-card">
+          <div class="result-content empty" id="resultContent">Yorumun burada görünecek.</div>
+          <div class="result-actions">
+            <button class="btn btn-secondary" id="copyBtn" type="button">Kopyala</button>
+            <button class="btn btn-secondary" id="waBtn" type="button">WhatsApp'ta Paylaş</button>
+            <button class="btn btn-secondary hidden" id="retryBtn" type="button">🔄 Yeniden Yorumla</button>
+            <button class="btn btn-secondary hidden" id="visualBtn" type="button">📸 Görsel Oluştur</button>
+            <button class="btn btn-secondary hidden" id="downloadBtn" type="button">İndir</button>
+            <button class="btn btn-secondary hidden" id="likeBtn" type="button">👍</button>
+            <button class="btn btn-secondary hidden" id="dislikeBtn" type="button">👎</button>
+          </div>
+        </article>
+        <section class="glass" style="padding:12px;">
+          <h3 style="margin:0 0 8px; font-size:1rem;">📜 Geçmiş Yorumlar</h3>
+          <div class="history-list" id="historyList"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="section glass">
+      <h2>Nasıl Çalışır?</h2>
+      <div class="grid-3">
+        <article class="info-card">
+          <div class="icon">✍️</div>
+          <h3>1. Yaz</h3>
+          <p>Rüyanı mümkün olduğunca net ve kısa cümlelerle yaz.</p>
+        </article>
+        <article class="info-card">
+          <div class="icon">🔮</div>
+          <h3>2. Yorumla</h3>
+          <p>Yapay zeka sembolleri Jung yaklaşımıyla katmanlı analiz eder.</p>
+        </article>
+        <article class="info-card">
+          <div class="icon">🌠</div>
+          <h3>3. Keşfet</h3>
+          <p>Mesajı günlük yaşamına taşı ve farkındalığını güçlendir.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section glass">
+      <h2>Önemli Yasal Uyarı</h2>
+      <p class="legal-note">
+        Bu platformdaki içerikler yapay zeka tarafından üretilir ve yalnızca bilgilendirme/eğlence amaçlıdır.
+        Kesin hüküm, dini fetva, tıbbi veya hukuki tavsiye yerine geçmez.
+      </p>
+    </section>
+
+    <section class="section glass">
+      <h2>Kullanıcı Yorumları</h2>
+      <div class="grid-3">
+        <article class="info-card">
+          <h3>Ayşe K.</h3>
+          <div class="stars-rating">★★★★★</div>
+          <p>Yorumlar şaşırtıcı derecede isabetli. Özellikle psikolojik anlam kısmı çok güçlüydü.</p>
+        </article>
+        <article class="info-card">
+          <h3>Mert A.</h3>
+          <div class="stars-rating">★★★★★</div>
+          <p>Kısa ama derin bir bakış veriyor. Her sabah rutinim haline geldi.</p>
+        </article>
+        <article class="info-card">
+          <h3>Selin T.</h3>
+          <div class="stars-rating">★★★★☆</div>
+          <p>Tasarımı çok iyi, anlatım dili sıcak. Pro sürümü çıkınca direkt alırım.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section glass" id="pro-section">
+      <h2>Pro Üyelik</h2>
+      <div class="plans">
+        <article class="plan">
+          <h3>Ücretsiz</h3>
+          <div class="price">0₺/ay</div>
+          <ul>
+            <li>Günde 2 rüya yorumu</li>
+            <li>Temel sembol analizi</li>
+            <li>Hızlı sonuç</li>
+          </ul>
+        </article>
+        <article class="plan">
+          <h3>Pro <span class="badge">Yakında</span></h3>
+          <div class="price">29₺/ay</div>
+          <ul>
+            <li>Sınırsız yorum</li>
+            <li>Geçmiş kayıtları görme</li>
+            <li>Detaylı derin analiz</li>
+          </ul>
+          <button class="btn payment-placeholder" type="button">Ödeme Altyapısı Yakında</button>
+        </article>
+      </div>
+    </section>
+
+    <div class="glass stats-line" id="statsLine">Bu ay 0 rüya yorumladın 🔮</div>
+
+    <footer class="glass">
+      <div>© 2026 RüyaYorum. Tüm hakları saklıdır.</div>
+      <div>
+        <a href="/gizlilik.html">Gizlilik Politikası</a> ·
+        <a href="/cerez-politikasi.html">Çerez Politikası</a> ·
+        <a href="/kullanim-kosullari.html">Kullanım Koşulları</a> ·
+        <a href="/kvkk.html">KVKK Aydınlatma</a> ·
+        <a href="/yasal-uyari.html">Yasal Uyarı</a> ·
+        <a href="mailto:iletisim@ruyayorum.app">İletişim</a>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <canvas id="shareCanvas" width="1080" height="1350"></canvas>
+  <script src="app.js"></script>
+
+</body>
+</html>
