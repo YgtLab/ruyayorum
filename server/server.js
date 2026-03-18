@@ -11,6 +11,7 @@ const v1Routes = require("./routes/v1");
 const errorHandler = require("./middleware/errorHandler");
 const { startWorkers } = require("./lib/queue");
 const { processEmailJob } = require("./utils/email");
+const { t } = require("./utils/i18n");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,12 +37,14 @@ const generalLimiter = rateLimit({
   max: Number.isFinite(generalLimitMax) ? generalLimitMax : 100,
   standardHeaders: true,
   legacyHeaders: false,
-  message: {
-    success: false,
-    error: {
-      code: "RATE_LIMITED",
-      message: "Çok fazla istek gönderdin. Lütfen biraz bekle."
-    }
+  handler: (req, res) => {
+    return res.status(429).json({
+      success: false,
+      error: {
+        code: "RATE_LIMITED",
+        message: t(req, "Çok fazla istek gönderdin. Lütfen biraz bekle.")
+      }
+    });
   }
 });
 
@@ -51,12 +54,14 @@ const strictAuthLimiter = rateLimit({
   max: Number.isFinite(authLimitMax) ? authLimitMax : 5,
   standardHeaders: true,
   legacyHeaders: false,
-  message: {
-    success: false,
-    error: {
-      code: "RATE_LIMITED",
-      message: "Çok fazla giriş denemesi. Lütfen biraz bekle."
-    }
+  handler: (req, res) => {
+    return res.status(429).json({
+      success: false,
+      error: {
+        code: "RATE_LIMITED",
+        message: t(req, "Çok fazla giriş denemesi. Lütfen biraz bekle.")
+      }
+    });
   }
 });
 
@@ -87,7 +92,7 @@ app.use("/api/auth", (_req, res) => {
     success: false,
     error: {
       code: "API_VERSION_DEPRECATED",
-      message: "Bu endpoint artık kullanılmıyor. /api/v1/auth kullanın."
+      message: t(_req, "Bu endpoint artık kullanılmıyor. /api/v1/auth kullanın.")
     }
   });
 });
@@ -97,7 +102,7 @@ app.use("/api/yorum", (_req, res) => {
     success: false,
     error: {
       code: "API_VERSION_DEPRECATED",
-      message: "Bu endpoint artık kullanılmıyor. /api/v1/yorum kullanın."
+      message: t(_req, "Bu endpoint artık kullanılmıyor. /api/v1/yorum kullanın.")
     }
   });
 });
@@ -107,7 +112,7 @@ app.use("/api/admin", (_req, res) => {
     success: false,
     error: {
       code: "API_VERSION_DEPRECATED",
-      message: "Bu endpoint artık kullanılmıyor. /api/v1/admin kullanın."
+      message: t(_req, "Bu endpoint artık kullanılmıyor. /api/v1/admin kullanın.")
     }
   });
 });
@@ -118,7 +123,7 @@ app.get("/api/v1/health", (_req, res) => res.json({ ok: true, version: "v1" }));
 app.use(express.static(path.join(__dirname, "..", "frontend")));
 
 app.get("*", (req, res) => {
-  if (req.path.startsWith("/api/")) return res.status(404).json({ error: "Endpoint bulunamadı." });
+  if (req.path.startsWith("/api/")) return res.status(404).json({ error: t(req, "Endpoint bulunamadı.") });
   return res.sendFile(path.join(__dirname, "..", "frontend", "index.html"));
 });
 

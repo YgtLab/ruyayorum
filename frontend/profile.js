@@ -18,6 +18,7 @@ const recoveryRegenerateForm = document.getElementById("recoveryRegenerateForm")
 const recoveryCodesBox = document.getElementById("recoveryCodesBox");
 const recoveryCodesText = document.getElementById("recoveryCodesText");
 const downloadRecoveryBtn = document.getElementById("downloadRecoveryBtn");
+const trEn = (trText, enText) => window.I18N?.trEn?.(trText, enText) || trText;
 
 function showToast(message) {
   toast.textContent = message;
@@ -26,37 +27,39 @@ function showToast(message) {
 }
 
 async function apiFetch(url, options = {}, canRetry = true) {
-  const res = await fetch(url, { credentials: "include", ...options });
+  const headers = { ...(options.headers || {}), "X-Lang": window.I18N?.getLang?.() || "tr" };
+  const res = await fetch(url, { credentials: "include", ...options, headers });
   const data = await res.json().catch(() => ({}));
 
   if (res.status === 401 && canRetry) {
-    const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include" });
+    const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include", headers: { "X-Lang": window.I18N?.getLang?.() || "tr" } });
     if (refreshRes.ok) return apiFetch(url, options, false);
   }
 
   if (!res.ok || data?.success === false) {
-    throw new Error(data?.error?.message || data?.error || "Sunucu hatası");
+    const rawMessage = data?.error?.message || data?.error || "Sunucu hatası";
+    throw new Error(window.I18N?.mapServerError?.(rawMessage) || rawMessage);
   }
 
   return data?.data ?? data;
 }
 
 function sessionItem(session) {
-  const ua = session.userAgent || "Bilinmeyen cihaz";
-  const when = new Date(session.createdAt).toLocaleString("tr-TR");
+  const ua = session.userAgent || trEn("Bilinmeyen cihaz", "Unknown device");
+  const when = new Date(session.createdAt).toLocaleString(window.I18N?.isEnglish?.() ? "en-US" : "tr-TR");
   return `
   <article class="history-item">
-    <button class="delete-btn" data-device="${session.deviceId}" type="button">Kapat</button>
+    <button class="delete-btn" data-device="${session.deviceId}" type="button">${trEn("Kapat", "Close")}</button>
     <div class="history-meta">${when}</div>
     <div class="history-text">${ua}</div>
   </article>`;
 }
 
 function historyItem(item) {
-  const when = new Date(item.createdAt).toLocaleString("tr-TR");
+  const when = new Date(item.createdAt).toLocaleString(window.I18N?.isEnglish?.() ? "en-US" : "tr-TR");
   return `
   <article class="history-item">
-    <button class="delete-btn" data-yorum="${item._id}" type="button">Sil</button>
+    <button class="delete-btn" data-yorum="${item._id}" type="button">${trEn("Sil", "Delete")}</button>
     <div class="history-meta">${when} · ${item.tip}</div>
     <div class="history-text">${item.ruya.slice(0, 130)}</div>
   </article>`;
@@ -65,10 +68,13 @@ function historyItem(item) {
 async function loadProfile() {
   const me = await apiFetch("/api/v1/auth/me");
   const user = me.user;
-  profileInfo.textContent = `${user.ad} · ${user.email} · Plan: ${user.plan} · Günlük hak: ${user.plan === "pro" ? "Sınırsız" : user.gunlukHak}`;
+  profileInfo.textContent = trEn(
+    `${user.ad} · ${user.email} · Plan: ${user.plan} · Günlük hak: ${user.plan === "pro" ? "Sınırsız" : user.gunlukHak}`,
+    `${user.ad} · ${user.email} · Plan: ${user.plan} · Daily credits: ${user.plan === "pro" ? "Unlimited" : user.gunlukHak}`
+  );
   adInput.value = user.ad;
   emailInput.value = user.email;
-  twoFaStatus.textContent = `Durum: ${user.twoFactorEnabled ? "Etkin" : "Kapalı"}`;
+  twoFaStatus.textContent = trEn(`Durum: ${user.twoFactorEnabled ? "Etkin" : "Kapalı"}`, `Status: ${user.twoFactorEnabled ? "Enabled" : "Disabled"}`);
   twoFaDisableForm.classList.toggle("hidden", !user.twoFactorEnabled);
   twoFaBeginBtn.classList.toggle("hidden", user.twoFactorEnabled);
   recoveryRegenerateForm.classList.toggle("hidden", !user.twoFactorEnabled);
@@ -79,25 +85,25 @@ async function loadRecoveryStatus() {
   try {
     const status = await apiFetch("/api/v1/auth/2fa/recovery-codes/status");
     if (!status.enabled) {
-      recoveryStatus.textContent = "Yedek kodlar: 2FA kapalı.";
+      recoveryStatus.textContent = trEn("Yedek kodlar: 2FA kapalı.", "Recovery codes: 2FA disabled.");
       return;
     }
-    recoveryStatus.textContent = `Yedek kod kalan adet: ${status.remaining}`;
+    recoveryStatus.textContent = trEn(`Yedek kod kalan adet: ${status.remaining}`, `Remaining recovery codes: ${status.remaining}`);
   } catch {
-    recoveryStatus.textContent = "Yedek kod bilgisi alınamadı.";
+    recoveryStatus.textContent = trEn("Yedek kod bilgisi alınamadı.", "Could not fetch recovery code status.");
   }
 }
 
 async function loadSessions() {
   const data = await apiFetch("/api/v1/auth/sessions");
   const sessions = data.sessions || [];
-  sessionsList.innerHTML = sessions.length ? sessions.map(sessionItem).join("") : '<article class="history-item"><div class="history-text">Aktif oturum yok.</div></article>';
+  sessionsList.innerHTML = sessions.length ? sessions.map(sessionItem).join("") : `<article class="history-item"><div class="history-text">${trEn("Aktif oturum yok.", "No active session.")}</div></article>`;
 }
 
 async function loadHistory() {
   const data = await apiFetch("/api/v1/yorum/gecmis");
   const rows = data.yorumlar || [];
-  myHistory.innerHTML = rows.length ? rows.map(historyItem).join("") : '<article class="history-item"><div class="history-text">Henüz yorum yok.</div></article>';
+  myHistory.innerHTML = rows.length ? rows.map(historyItem).join("") : `<article class="history-item"><div class="history-text">${trEn("Henüz yorum yok.", "No interpretation yet.")}</div></article>`;
 }
 
 profileForm.addEventListener("submit", async (e) => {
@@ -109,7 +115,7 @@ profileForm.addEventListener("submit", async (e) => {
       body: JSON.stringify({ ad: adInput.value.trim() })
     });
     await loadProfile();
-    showToast("Profil güncellendi.");
+    showToast(trEn("Profil güncellendi.", "Profile updated."));
   } catch (err) {
     showToast(err.message);
   }
@@ -124,7 +130,7 @@ passwordForm.addEventListener("submit", async (e) => {
       body: JSON.stringify({ mevcutSifre: document.getElementById("oldPass").value, yeniSifre: document.getElementById("newPass").value })
     });
     passwordForm.reset();
-    showToast("Şifre güncellendi.");
+    showToast(trEn("Şifre güncellendi.", "Password updated."));
   } catch (err) {
     showToast(err.message);
   }
@@ -136,7 +142,7 @@ sessionsList.addEventListener("click", async (e) => {
   try {
     await apiFetch(`/api/v1/auth/sessions/${encodeURIComponent(target.dataset.device)}`, { method: "DELETE" });
     await loadSessions();
-    showToast("Oturum kapatıldı.");
+    showToast(trEn("Oturum kapatıldı.", "Session closed."));
   } catch (err) {
     showToast(err.message);
   }
@@ -148,7 +154,7 @@ myHistory.addEventListener("click", async (e) => {
   try {
     await apiFetch(`/api/v1/yorum/${target.dataset.yorum}`, { method: "DELETE" });
     await loadHistory();
-    showToast("Yorum silindi.");
+    showToast(trEn("Yorum silindi.", "Interpretation deleted."));
   } catch (err) {
     showToast(err.message);
   }
@@ -160,7 +166,7 @@ twoFaBeginBtn.addEventListener("click", async () => {
     twoFaQr.src = data.qrDataUrl;
     twoFaMask.textContent = `Gizli anahtar: ${data.secretMasked}`;
     twoFaSetup.classList.remove("hidden");
-    showToast("Authenticator uygulamasıyla QR kodu okut.");
+    showToast(trEn("Authenticator uygulamasıyla QR kodu okut.", "Scan the QR code with your authenticator app."));
   } catch (err) {
     showToast(err.message);
   }
@@ -175,7 +181,7 @@ twoFaDisableForm.addEventListener("submit", async (e) => {
       body: JSON.stringify({ code: document.getElementById("twoFaDisableCode").value.trim() })
     });
     await loadProfile();
-    showToast("2FA kapatıldı.");
+    showToast(trEn("2FA kapatıldı.", "2FA disabled."));
   } catch (err) {
     showToast(err.message);
   }
@@ -193,7 +199,7 @@ twoFaEnableForm.addEventListener("submit", async (e) => {
     recoveryCodesBox.classList.remove("hidden");
     twoFaSetup.classList.add("hidden");
     await loadProfile();
-    showToast("2FA etkinleştirildi.");
+    showToast(trEn("2FA etkinleştirildi.", "2FA enabled."));
   } catch (err) {
     showToast(err.message);
   }
@@ -219,7 +225,7 @@ recoveryRegenerateForm.addEventListener("submit", async (e) => {
 downloadRecoveryBtn.addEventListener("click", () => {
   const content = recoveryCodesText.textContent.trim();
   if (!content) {
-    showToast("İndirilecek yedek kod bulunamadı.");
+    showToast(trEn("İndirilecek yedek kod bulunamadı.", "No recovery code to download."));
     return;
   }
   const blob = new Blob([content + "\n"], { type: "text/plain;charset=utf-8" });
@@ -229,7 +235,7 @@ downloadRecoveryBtn.addEventListener("click", () => {
   a.download = `ruyayorum-2fa-yedek-kodlar-${Date.now()}.txt`;
   a.click();
   URL.revokeObjectURL(url);
-  showToast("Yedek kodlar indirildi.");
+  showToast(trEn("Yedek kodlar indirildi.", "Recovery codes downloaded."));
 });
 
 (async () => {

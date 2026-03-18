@@ -42,6 +42,15 @@
     let lastInterpretation = "";
     let lastYorumId = "";
     let lastShareDataUrl = "";
+    function getLang() {
+      return window.I18N?.getLang?.() === "en" ? "en" : "tr";
+    }
+    function getLocale() {
+      return getLang() === "en" ? "en-US" : "tr-TR";
+    }
+    function trEn(trText, enText) {
+      return getLang() === "en" ? enText : trText;
+    }
     const sampleDreams = [
       "Rüyamda eski bir evde kapıları tek tek açıyordum, her odada farklı bir ışık vardı.",
       "Yüksek bir dağın tepesine çıktım ve ufukta altın renkli bir güneş doğuyordu.",
@@ -77,18 +86,20 @@
     navbar.appendChild(userMenu);
 
     async function apiFetch(url, options = {}, canRetry = true) {
-      const res = await fetch(url, { credentials: "include", ...options });
+      const headers = { ...(options.headers || {}), "X-Lang": window.I18N?.getLang?.() || "tr" };
+      const res = await fetch(url, { credentials: "include", ...options, headers });
       const data = await res.json().catch(() => ({}));
 
       if (res.status === 401 && canRetry) {
-        const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include" });
+        const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include", headers: { "X-Lang": window.I18N?.getLang?.() || "tr" } });
         if (refreshRes.ok) {
           return apiFetch(url, options, false);
         }
       }
 
       if (!res.ok || (data && data.success === false)) {
-        const message = data?.error?.message || data?.error || "Sunucu hatası";
+        const rawMessage = data?.error?.message || data?.error || "Sunucu hatası";
+        const message = window.I18N?.mapServerError?.(rawMessage) || rawMessage;
         throw new Error(message);
       }
 
@@ -98,10 +109,10 @@
     function renderUserMenu() {
       if (currentUser) {
         userMenu.innerHTML = `<span style="font-size:.9rem;color:var(--muted);">${currentUser.ad}</span>
-        <a class="btn btn-secondary" href="/profile.html">Profil</a>
-        <a class="btn btn-secondary" href="/support.html">Destek</a>
-        ${currentUser.role === "admin" ? '<a class="btn btn-secondary" href="/admin.html">Admin</a>' : ""}
-        <button class="btn btn-secondary" id="logoutBtn" type="button">Çıkış</button>`;
+        <a class="btn btn-secondary" href="/profile.html">${trEn("Profil", "Profile")}</a>
+        <a class="btn btn-secondary" href="/support.html">${trEn("Destek", "Support")}</a>
+        ${currentUser.role === "admin" ? `<a class="btn btn-secondary" href="/admin.html">${trEn("Admin", "Admin")}</a>` : ""}
+        <button class="btn btn-secondary" id="logoutBtn" type="button">${trEn("Çıkış", "Logout")}</button>`;
         document.getElementById("logoutBtn").addEventListener("click", async () => {
           await apiFetch("/api/v1/auth/logout", { method: "POST" });
           currentUser = null;
@@ -111,7 +122,7 @@
           updateHakUI();
         });
       } else {
-        userMenu.innerHTML = `<a class="btn btn-secondary" href="/auth.html">Giriş / Kayıt</a>`;
+        userMenu.innerHTML = `<a class="btn btn-secondary" href="/auth.html">${trEn("Giriş / Kayıt", "Login / Register")}</a>`;
       }
     }
 
@@ -232,7 +243,7 @@
         const data = await apiFetch("/api/v1/yorum/gecmis");
         remoteHistory = (data.yorumlar || []).map((y) => ({
           id: y._id,
-          tarih: new Date(y.createdAt).toLocaleString("tr-TR"),
+          tarih: new Date(y.createdAt).toLocaleString(getLocale()),
           tip: y.tip,
           ruya: y.ruya,
           yorum: y.yorum
@@ -247,7 +258,7 @@
       if (!history.length) {
         const empty = document.createElement("div");
         empty.className = "history-item";
-        empty.innerHTML = '<div class="history-text">Henüz geçmiş yorum yok.</div>';
+        empty.innerHTML = `<div class="history-text">${trEn("Henüz geçmiş yorum yok.", "No interpretation history yet.")}</div>`;
         historyList.appendChild(empty);
         return;
       }
@@ -320,11 +331,11 @@
       if (currentUser) {
         try {
           const data = await apiFetch("/api/v1/yorum/istatistik");
-          statsLine.textContent = `Bu ay ${data.buAy} rüya yorumladın 🔮`;
+          statsLine.textContent = trEn(`Bu ay ${data.buAy} rüya yorumladın 🔮`, `You interpreted ${data.buAy} dreams this month 🔮`);
           return;
         } catch {}
       }
-      statsLine.textContent = `Bu ay ${readMonthlyTotal()} rüya yorumladın 🔮`;
+      statsLine.textContent = trEn(`Bu ay ${readMonthlyTotal()} rüya yorumladın 🔮`, `You interpreted ${readMonthlyTotal()} dreams this month 🔮`);
     }
 
     function renderDaySymbol() {
@@ -337,13 +348,13 @@
     async function updateHakUI() {
       try {
         const data = await apiFetch("/api/v1/yorum/hak");
-        const label = data.kalanHak === "sinirsiz" ? "Sınırsız" : data.kalanHak;
+        const label = data.kalanHak === "sinirsiz" ? trEn("Sınırsız", "Unlimited") : data.kalanHak;
         const max = data.plan === "pro" ? "∞" : 2;
-        hakDurumu.innerHTML = `Günlük hak: <strong>${label}</strong>/${max}`;
+        hakDurumu.innerHTML = trEn(`Günlük hak: <strong>${label}</strong>/${max}`, `Daily credits: <strong>${label}</strong>/${max}`);
         return;
       } catch {}
       const { sayi } = readHak();
-      hakDurumu.innerHTML = `Günlük hak: <strong>${sayi}</strong>/${DAILY_LIMIT}`;
+      hakDurumu.innerHTML = trEn(`Günlük hak: <strong>${sayi}</strong>/${DAILY_LIMIT}`, `Daily credits: <strong>${sayi}</strong>/${DAILY_LIMIT}`);
     }
 
     function setLoading(status) {
@@ -368,7 +379,7 @@
     }
 
     function updateCounter() {
-      charCounter.textContent = `${dreamInput.value.length}/${MAX_CHAR} karakter`;
+      charCounter.textContent = trEn(`${dreamInput.value.length}/${MAX_CHAR} karakter`, `${dreamInput.value.length}/${MAX_CHAR} characters`);
     }
 
     function buildPrompt(userDream) {
@@ -484,7 +495,8 @@ ${userDream}`;
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ruya: cleanDream,
-          tip: yorumTipi
+          tip: yorumTipi,
+          lang: getLang()
         })
       });
       return data;
@@ -532,11 +544,11 @@ ${userDream}`;
     }
 
     async function runInterpretation(cleanDream, consumeRight = true) {
-      if (!cleanDream) { setResult("Lütfen rüyanı yaz.", "error"); return; }
+      if (!cleanDream) { setResult(trEn("Lütfen rüyanı yaz.", "Please write your dream."), "error"); return; }
 
       try {
         setLoading(true);
-        setResult("Yorum hazırlanıyor...", "");
+        setResult(trEn("Yorum hazırlanıyor...", "Preparing interpretation..."), "");
         const result = await fetchInterpretation(cleanDream);
         const text = result.yorum;
         setResult(text, "");
@@ -545,7 +557,7 @@ ${userDream}`;
         lastYorumId = result.yorumId || "";
         if (consumeRight && !currentUser) useOneHak();
         saveHistoryItem({
-          tarih: new Date().toLocaleString("tr-TR"),
+          tarih: new Date().toLocaleString(getLocale()),
           tip: yorumTipi,
           ruya: cleanDream,
           yorum: text
@@ -560,7 +572,7 @@ ${userDream}`;
         dislikeBtn.classList.remove("hidden");
         triggerConfetti();
       } catch (err) {
-        setResult(`Yorum alınamadı: ${err.message}`, "error");
+        setResult(trEn(`Yorum alınamadı: ${err.message}`, `Interpretation failed: ${err.message}`), "error");
       } finally {
         setLoading(false);
       }
@@ -573,7 +585,7 @@ ${userDream}`;
 
     retryBtn.addEventListener("click", async () => {
       if (!lastSuccessfulDream) {
-        showToast("Önce bir yorum oluşturmalısın.");
+        showToast(trEn("Önce bir yorum oluşturmalısın.", "Generate an interpretation first."));
         return;
       }
       await runInterpretation(lastSuccessfulDream, false);
@@ -582,33 +594,33 @@ ${userDream}`;
     copyBtn.addEventListener("click", async () => {
       const text = resultContent.textContent.trim();
       if (!text || resultContent.classList.contains("empty") || resultContent.classList.contains("error")) {
-        showToast("Kopyalanacak bir yorum bulunamadı."); return;
+        showToast(trEn("Kopyalanacak bir yorum bulunamadı.", "No interpretation to copy.")); return;
       }
-      try { await navigator.clipboard.writeText(text); showToast("Yorum panoya kopyalandı."); }
-      catch { showToast("Kopyalama başarısız oldu."); }
+      try { await navigator.clipboard.writeText(text); showToast(trEn("Yorum panoya kopyalandı.", "Interpretation copied.")); }
+      catch { showToast(trEn("Kopyalama başarısız oldu.", "Copy failed.")); }
     });
 
     waBtn.addEventListener("click", () => {
       const text = resultContent.textContent.trim();
       if (!text || resultContent.classList.contains("empty") || resultContent.classList.contains("error")) {
-        showToast("Önce bir yorum oluşturmalısın."); return;
+        showToast(trEn("Önce bir yorum oluşturmalısın.", "Generate an interpretation first.")); return;
       }
       window.open(`https://wa.me/?text=${encodeURIComponent("RüyaYorum sonucum:\n\n" + text)}`, "_blank", "noopener,noreferrer");
     });
 
     likeBtn.addEventListener("click", async () => {
       await saveFeedback("up");
-      showToast("Geri bildiriminiz için teşekkürler!");
+      showToast(trEn("Geri bildiriminiz için teşekkürler!", "Thanks for your feedback!"));
     });
     dislikeBtn.addEventListener("click", async () => {
       await saveFeedback("down");
-      showToast("Geri bildiriminiz için teşekkürler!");
+      showToast(trEn("Geri bildiriminiz için teşekkürler!", "Thanks for your feedback!"));
     });
 
     visualBtn.addEventListener("click", () => {
       const text = lastInterpretation || resultContent.textContent.trim();
       if (!text || resultContent.classList.contains("error")) {
-        showToast("Görsel için önce geçerli bir yorum oluştur.");
+        showToast(trEn("Görsel için önce geçerli bir yorum oluştur.", "Create a valid interpretation first."));
         return;
       }
       const ctx = shareCanvas.getContext("2d");
@@ -652,7 +664,7 @@ ${userDream}`;
       ctx.fillText("ruyayorum.app", 80, h - 90);
       lastShareDataUrl = shareCanvas.toDataURL("image/png");
       downloadBtn.classList.remove("hidden");
-      showToast("Görsel hazır. İndir'e tıkla.");
+      showToast(trEn("Görsel hazır. İndir'e tıkla.", "Visual is ready. Click Download."));
     });
 
     downloadBtn.addEventListener("click", () => {
@@ -667,7 +679,7 @@ ${userDream}`;
       const pick = sampleDreams[Math.floor(Math.random() * sampleDreams.length)];
       dreamInput.value = pick;
       updateCounter();
-      showToast("Örnek rüya eklendi.");
+      showToast(trEn("Örnek rüya eklendi.", "Sample dream inserted."));
     });
 
     historyList.addEventListener("click", (e) => {
@@ -683,24 +695,24 @@ ${userDream}`;
           .then(() => loadRemoteHistory())
           .then(() => {
             renderHistory();
-            showToast("Geçmiş yorum silindi.");
+            showToast(trEn("Geçmiş yorum silindi.", "History item deleted."));
           })
-          .catch((err) => showToast(err.message || "Silme başarısız."));
+          .catch((err) => showToast(err.message || trEn("Silme başarısız.", "Delete failed.")));
         return;
       }
       const history = readHistory();
       history.splice(idx, 1);
       localStorage.setItem(KEY_HIST, JSON.stringify(history));
       renderHistory();
-      showToast("Geçmiş yorum silindi.");
+      showToast(trEn("Geçmiş yorum silindi.", "History item deleted."));
     });
 
     symbolCard.addEventListener("click", () => {
-      const sym = symbolCard.dataset.symbol || "sembol";
-      const text = `Rüyamda ${sym} gördüm.`;
+      const sym = symbolCard.dataset.symbol || trEn("sembol", "symbol");
+      const text = trEn(`Rüyamda ${sym} gördüm.`, `I saw ${sym} in my dream.`);
       dreamInput.value = dreamInput.value.trim() ? `${dreamInput.value.trim()}\n${text}` : text;
       updateCounter();
-      showToast("Günün sembolü rüya metnine eklendi.");
+      showToast(trEn("Günün sembolü rüya metnine eklendi.", "Symbol of the day added to your dream text."));
     });
 
     proTopBtn.addEventListener("click", () => {

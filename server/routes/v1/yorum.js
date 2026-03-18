@@ -37,7 +37,8 @@ router.post(
   optionalAuth,
   [
     body("ruya").isString().withMessage("Rüya metni zorunludur."),
-    body("tip").isIn(["psikolojik", "dini"]).withMessage("Geçersiz yorum tipi.")
+    body("tip").isIn(["psikolojik", "dini"]).withMessage("Geçersiz yorum tipi."),
+    body("lang").optional().isIn(["tr", "en"]).withMessage("Geçersiz dil seçimi.")
   ],
   validate,
   asyncHandler(async (req, res) => {
@@ -45,7 +46,8 @@ router.post(
       req,
       user: req.user,
       ruya: req.body.ruya,
-      tip: req.body.tip
+      tip: req.body.tip,
+      lang: req.body.lang || "tr"
     });
 
     return ok(res, result, "Yorum üretildi.");

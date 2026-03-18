@@ -6,6 +6,7 @@ let ticketStatus = "";
 let ticketPriority = "";
 let ticketSearch = "";
 const toast = document.getElementById("toast");
+const trEn = (trText, enText) => window.I18N?.trEn?.(trText, enText) || trText;
 
 function showToast(message) {
   if (!toast) {
@@ -22,18 +23,20 @@ function jsonHeaders() {
 }
 
 async function apiFetch(url, options = {}, canRetry = true) {
-  const res = await fetch(url, { credentials: "include", ...options });
+  const headers = { ...(options.headers || {}), "X-Lang": window.I18N?.getLang?.() || "tr" };
+  const res = await fetch(url, { credentials: "include", ...options, headers });
   const data = await res.json().catch(() => ({}));
 
   if (res.status === 401 && canRetry) {
-    const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include" });
+    const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include", headers: { "X-Lang": window.I18N?.getLang?.() || "tr" } });
     if (refreshRes.ok) {
       return apiFetch(url, options, false);
     }
   }
 
   if (!res.ok || (data && data.success === false)) {
-    throw new Error(data?.error?.message || data?.error || "Sunucu hatası");
+    const rawMessage = data?.error?.message || data?.error || "Sunucu hatası";
+    throw new Error(window.I18N?.mapServerError?.(rawMessage) || rawMessage);
   }
   return data?.data ?? data;
 }
@@ -41,9 +44,9 @@ async function apiFetch(url, options = {}, canRetry = true) {
 async function ensureAdmin() {
   try {
     const data = await apiFetch("/api/v1/auth/me");
-    if (data.user.role !== "admin") throw new Error("Bu sayfa sadece admin kullanıcılar içindir.");
+    if (data.user.role !== "admin") throw new Error(trEn("Bu sayfa sadece admin kullanıcılar içindir.", "This page is only for admin users."));
   } catch {
-    alert("Bu sayfa sadece admin kullanıcılar içindir.");
+    alert(trEn("Bu sayfa sadece admin kullanıcılar içindir.", "This page is only for admin users."));
     location.href = "/auth.html";
     return false;
   }
@@ -60,11 +63,11 @@ async function loadStats() {
     return;
   }
   const cards = [
-    ["Toplam Üye", data.toplamKullanici],
-    ["Bugün Kayıt", data.bugunKayit],
-    ["Toplam Yorum", data.toplamYorum],
-    ["Bugün Yorum", data.bugunYorum],
-    ["Pro Üye", data.proUye]
+    [trEn("Toplam Üye", "Total Users"), data.toplamKullanici],
+    [trEn("Bugün Kayıt", "Today Signups"), data.bugunKayit],
+    [trEn("Toplam Yorum", "Total Interpretations"), data.toplamYorum],
+    [trEn("Bugün Yorum", "Today Interpretations"), data.bugunYorum],
+    [trEn("Pro Üye", "Pro Members"), data.proUye]
   ];
   document.getElementById("statsGrid").innerHTML = cards.map(([k, v]) => `
     <article class="info-card"><h3>${k}</h3><p style="font-size:1.4rem;color:#f0c040;">${v}</p></article>
@@ -76,19 +79,22 @@ async function loadUsers() {
   try {
     data = await apiFetch(`/api/v1/admin/kullanicilar?page=${page}&limit=${limit}&q=${encodeURIComponent(q)}`);
   } catch (err) {
-    alert(err.message || "Kullanıcılar alınamadı");
+    alert(err.message || trEn("Kullanıcılar alınamadı", "Could not fetch users"));
     return;
   }
 
   const list = Array.isArray(data.kullanicilar) ? data.kullanicilar : [];
-  document.getElementById("pageLabel").textContent = `Sayfa ${data.page}`;
-  document.getElementById("usersInfo").textContent = `Toplam ${data.toplam} kullanıcı, bu sayfada ${list.length} kayıt gösteriliyor.`;
+  document.getElementById("pageLabel").textContent = trEn(`Sayfa ${data.page}`, `Page ${data.page}`);
+  document.getElementById("usersInfo").textContent = trEn(
+    `Toplam ${data.toplam} kullanıcı, bu sayfada ${list.length} kayıt gösteriliyor.`,
+    `Total ${data.toplam} users, showing ${list.length} records on this page.`
+  );
 
   if (!list.length) {
     document.getElementById("userRows").innerHTML = `
       <tr>
         <td colspan="4" style="padding:10px; border-top:1px solid var(--border); color:var(--muted);">
-          Kayıt bulunamadı.
+          ${trEn("Kayıt bulunamadı.", "No record found.")}
         </td>
       </tr>`;
     return;
@@ -99,12 +105,12 @@ async function loadUsers() {
       <td style="padding:8px; border-top:1px solid var(--border);">${u.email}</td>
       <td style="padding:8px; border-top:1px solid var(--border);">${u.role || "user"}</td>
       <td style="padding:8px; border-top:1px solid var(--border);">${u.plan}</td>
-      <td style="padding:8px; border-top:1px solid var(--border);">${u.aktif ? "Evet" : "Hayır"}</td>
+      <td style="padding:8px; border-top:1px solid var(--border);">${u.aktif ? trEn("Evet", "Yes") : trEn("Hayır", "No")}</td>
       <td style="padding:8px; border-top:1px solid var(--border);">
-        <button class="btn btn-secondary" data-action="detay" data-id="${u._id}">Detay</button>
-        <button class="btn btn-secondary" data-action="plan" data-id="${u._id}" data-plan="${u.plan === "pro" ? "free" : "pro"}">Plan</button>
-        <button class="btn btn-secondary" data-action="aktif" data-id="${u._id}" data-aktif="${String(!u.aktif)}">Aktif/Pasif</button>
-        <button class="btn btn-secondary" data-action="sil" data-id="${u._id}">Sil</button>
+        <button class="btn btn-secondary" data-action="detay" data-id="${u._id}">${trEn("Detay", "Detail")}</button>
+        <button class="btn btn-secondary" data-action="plan" data-id="${u._id}" data-plan="${u.plan === "pro" ? "free" : "pro"}">${trEn("Plan", "Plan")}</button>
+        <button class="btn btn-secondary" data-action="aktif" data-id="${u._id}" data-aktif="${String(!u.aktif)}">${trEn("Aktif/Pasif", "Active/Passive")}</button>
+        <button class="btn btn-secondary" data-action="sil" data-id="${u._id}">${trEn("Sil", "Delete")}</button>
       </td>
     </tr>
   `).join("");
@@ -130,11 +136,11 @@ async function setAktif(id, aktif) {
 }
 
 async function deleteUser(id) {
-  if (!confirm("Bu kullanıcı silinsin mi?")) return;
+  if (!confirm(trEn("Bu kullanıcı silinsin mi?", "Delete this user?"))) return;
   try {
     await apiFetch(`/api/v1/admin/kullanici/${id}`, { method: "DELETE" });
   } catch (err) {
-    alert(err.message || "Silme başarısız");
+    alert(err.message || trEn("Silme başarısız", "Delete failed"));
     return;
   }
   await loadUsers();
@@ -157,7 +163,7 @@ async function loadAudit() {
         <div class="history-meta">${new Date(log.createdAt).toLocaleString("tr-TR")} · ${log.action}</div>
         <div class="history-text">${log.targetType || "-"} / ${log.targetId || "-"}</div>
       </article>`).join("")
-    : '<article class="history-item"><div class="history-text">Audit kaydı yok.</div></article>';
+    : `<article class="history-item"><div class="history-text">${trEn("Audit kaydı yok.", "No audit log found.")}</div></article>`;
 }
 
 async function loadUserDetail(id) {
@@ -176,12 +182,12 @@ async function loadUserDetail(id) {
   document.getElementById("userDetailBox").innerHTML = `
     <article class="history-item">
       <div class="history-meta">${user.email}</div>
-      <div class="history-text">Ad: ${user.ad} · Rol: ${user.role} · Plan: ${user.plan} · Aktif: ${user.aktif ? "Evet" : "Hayır"}</div>
-      <div class="history-text" style="margin-top:8px;">Toplam Yorum: ${data.toplamYorum} · Aktif Oturum: ${data.aktifOturumSayisi}</div>
-      <div class="history-text" style="margin-top:8px;">AI Maliyet (son): $${data.aiOzet?.toplamMaliyetUsd || 0} · Token: ${data.aiOzet?.toplamToken || 0}</div>
-      <div class="history-text" style="margin-top:8px;">Son Oturumlar:</div>
+      <div class="history-text">${trEn("Ad", "Name")}: ${user.ad} · ${trEn("Rol", "Role")}: ${user.role} · ${trEn("Plan", "Plan")}: ${user.plan} · ${trEn("Aktif", "Active")}: ${user.aktif ? trEn("Evet", "Yes") : trEn("Hayır", "No")}</div>
+      <div class="history-text" style="margin-top:8px;">${trEn("Toplam Yorum", "Total Interpretations")}: ${data.toplamYorum} · ${trEn("Aktif Oturum", "Active Session")}: ${data.aktifOturumSayisi}</div>
+      <div class="history-text" style="margin-top:8px;">${trEn("AI Maliyet (son)", "AI Cost (recent)")}: $${data.aiOzet?.toplamMaliyetUsd || 0} · Token: ${data.aiOzet?.toplamToken || 0}</div>
+      <div class="history-text" style="margin-top:8px;">${trEn("Son Oturumlar", "Recent Sessions")}:</div>
       <ul style="margin:6px 0 0 16px; color:var(--muted);">${sessions || "<li>Yok</li>"}</ul>
-      <div class="history-text" style="margin-top:8px;">Son Yorumlar:</div>
+      <div class="history-text" style="margin-top:8px;">${trEn("Son Yorumlar", "Recent Interpretations")}:</div>
       <ul style="margin:6px 0 0 16px; color:var(--muted);">${yorumlar || "<li>Yok</li>"}</ul>
     </article>`;
 }
@@ -194,7 +200,7 @@ function renderAdminTickets(tickets) {
         <div class="history-meta">${new Date(t.updatedAt).toLocaleString("tr-TR")} · ${t.status} · ${t.priority}</div>
         <div class="history-text">${t.subject} · ${t.userId?.email || "-"}</div>
       </article>`).join("")
-    : '<article class="history-item"><div class="history-text">Ticket bulunamadı.</div></article>';
+    : `<article class="history-item"><div class="history-text">${trEn("Ticket bulunamadı.", "Ticket not found.")}</div></article>`;
 }
 
 async function loadTicketsAdmin() {
@@ -235,21 +241,21 @@ async function loadTicketAdminDetail(id) {
   document.getElementById("adminTicketDetail").innerHTML = `
     <article class="profile-card">
       <h3>${t.subject}</h3>
-      <p style="color:var(--muted);">Kullanıcı: ${t.userId?.email || "-"} · Durum: ${t.status} · Öncelik: ${t.priority}</p>
+      <p style="color:var(--muted);">${trEn("Kullanıcı", "User")}: ${t.userId?.email || "-"} · ${trEn("Durum", "Status")}: ${t.status} · ${trEn("Öncelik", "Priority")}: ${t.priority}</p>
       <div class="history-list">${msgs}</div>
       <div class="row" style="margin-top:10px; gap:8px;">
-        <button class="btn btn-secondary" data-ticket-action="close" data-ticket-id="${t._id}">Kapat</button>
-        <button class="btn btn-secondary" data-ticket-action="open" data-ticket-id="${t._id}">Aç</button>
+        <button class="btn btn-secondary" data-ticket-action="close" data-ticket-id="${t._id}">${trEn("Kapat", "Close")}</button>
+        <button class="btn btn-secondary" data-ticket-action="open" data-ticket-id="${t._id}">${trEn("Aç", "Open")}</button>
         <button class="btn btn-secondary" data-ticket-action="priority-high" data-ticket-id="${t._id}">High</button>
       </div>
       <form id="adminTicketReplyForm" class="profile-form" style="margin-top:10px;">
-        <label>Admin Yanıtı
+        <label>${trEn("Admin Yanıtı", "Admin Reply")}
           <textarea id="adminTicketReply" required></textarea>
         </label>
-        <label>Ek Dosya (opsiyonel)
+        <label>${trEn("Ek Dosya (opsiyonel)", "Attachment (optional)")}
           <input id="adminTicketFiles" type="file" multiple />
         </label>
-        <button class="btn btn-main" type="submit">Yanıt Gönder</button>
+        <button class="btn btn-main" type="submit">${trEn("Yanıt Gönder", "Send Reply")}</button>
       </form>
     </article>`;
 
@@ -379,13 +385,13 @@ document.getElementById("ticketNextPage").addEventListener("click", async () => 
     try {
       const payload = JSON.parse(event.data || "{}");
       if (payload.type && payload.type !== "connected") {
-        showToast("Ticket güncellendi.");
+        showToast(trEn("Ticket güncellendi.", "Ticket updated."));
       }
     } catch {}
     await Promise.all([loadTicketsAdmin(), loadStats()]);
   });
   eventSource.onerror = () => {
-    showToast("Canlı bildirim bağlantısı kesildi, tekrar denenecek.");
+    showToast(trEn("Canlı bildirim bağlantısı kesildi, tekrar denenecek.", "Live notification connection lost, retrying."));
   };
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js").catch(() => {});

@@ -48,7 +48,7 @@ async function getHak(req, user) {
   return { plan: "guest", kalanHak: Math.max(0, GUEST_LIMIT - guestEntry.count) };
 }
 
-async function createYorum({ req, user, ruya, tip }) {
+async function createYorum({ req, user, ruya, tip, lang = "tr" }) {
   if (!ruya || typeof ruya !== "string" || !ruya.trim()) {
     throw new AppError("Rüya metni boş olamaz.", 400, "VALIDATION_ERROR");
   }
@@ -57,6 +57,9 @@ async function createYorum({ req, user, ruya, tip }) {
   }
   if (!["psikolojik", "dini"].includes(tip)) {
     throw new AppError("Geçersiz yorum tipi.", 400, "VALIDATION_ERROR");
+  }
+  if (!["tr", "en"].includes(lang)) {
+    throw new AppError("Geçersiz dil seçimi.", 400, "VALIDATION_ERROR");
   }
 
   let guestEntry = null;
@@ -73,7 +76,7 @@ async function createYorum({ req, user, ruya, tip }) {
   }
 
   const cleanDream = ruya.trim();
-  const { prompt, version } = await resolvePrompt({ ruya: cleanDream, tip });
+  const { prompt, version } = await resolvePrompt({ ruya: cleanDream, tip, lang });
   const ai = await generateInterpretation({ prompt, ruya: cleanDream });
 
   const yorum = await Yorum.create({

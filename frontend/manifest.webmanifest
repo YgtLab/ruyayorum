@@ -1,7 +1,8 @@
 {
   "name": "RüyaYorum",
   "short_name": "RüyaYorum",
-  "description": "Yapay zeka destekli rüya yorumlama uygulaması",
+  "description": "AI-powered dream interpretation app / Yapay zeka destekli rüya yorumlama uygulaması",
+  "lang": "en",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

@@ -11,23 +11,26 @@ const authSection = document.getElementById("authSection");
 const resetSection = document.getElementById("resetSection");
 const forgotBtn = document.getElementById("forgotBtn");
 const backToLoginBtn = document.getElementById("backToLoginBtn");
+const trEn = (trText, enText) => window.I18N?.trEn?.(trText, enText) || trText;
 
 const params = new URLSearchParams(window.location.search);
 const resetToken = params.get("resetToken") || "";
 
 async function apiFetch(url, options = {}, canRetry = true) {
-  const res = await fetch(url, { credentials: "include", ...options });
+  const headers = { ...(options.headers || {}), "X-Lang": window.I18N?.getLang?.() || "tr" };
+  const res = await fetch(url, { credentials: "include", ...options, headers });
   const data = await res.json().catch(() => ({}));
 
   if (res.status === 401 && canRetry && !url.includes("/auth/login") && !url.includes("/auth/register")) {
-    const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include" });
+    const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include", headers: { "X-Lang": window.I18N?.getLang?.() || "tr" } });
     if (refreshRes.ok) {
       return apiFetch(url, options, false);
     }
   }
 
   if (!res.ok || (data && data.success === false)) {
-    throw new Error(data?.error?.message || data?.error || "Sunucu hatası");
+    const rawMessage = data?.error?.message || data?.error || "Sunucu hatası";
+    throw new Error(window.I18N?.mapServerError?.(rawMessage) || rawMessage);
   }
   return data?.data ?? data;
 }
@@ -72,7 +75,7 @@ async function ben() {
     document.getElementById("logoutBtn").addEventListener("click", async () => {
       await apiFetch("/api/v1/auth/logout", { method: "POST" });
       profilBox.classList.add("hidden");
-      setMsg("Çıkış yapıldı.");
+      setMsg(trEn("Çıkış yapıldı.", "Logged out."));
     });
   } catch {
     profilBox.classList.add("hidden");
@@ -83,7 +86,7 @@ async function ben() {
 
 formGiris.addEventListener("submit", async (e) => {
   e.preventDefault();
-  setMsg("Giriş yapılıyor...");
+  setMsg(trEn("Giriş yapılıyor...", "Signing in..."));
   const payload = {
     email: document.getElementById("girisEmail").value.trim(),
     password: document.getElementById("girisSifre").value,
@@ -98,16 +101,16 @@ formGiris.addEventListener("submit", async (e) => {
       body: JSON.stringify(payload)
     });
   } catch (err) {
-    const message = err.message || "Giriş başarısız";
+    const message = err.message || trEn("Giriş başarısız", "Login failed");
     if (message.toLowerCase().includes("2fa")) {
-      setMsg(`${message} Sağdaki alana 2FA kodunu yazıp tekrar dene.`, true);
+      setMsg(trEn(`${message} Sağdaki alana 2FA kodunu yazıp tekrar dene.`, `${message} Enter your 2FA code and try again.`), true);
     } else {
       setMsg(message, true);
     }
     return;
   }
 
-  setMsg("Giriş başarılı, yönlendiriliyorsun...");
+  setMsg(trEn("Giriş başarılı, yönlendiriliyorsun...", "Login successful, redirecting..."));
   setTimeout(() => {
     window.location.href = "/";
   }, 700);
@@ -115,7 +118,7 @@ formGiris.addEventListener("submit", async (e) => {
 
 formKayit.addEventListener("submit", async (e) => {
   e.preventDefault();
-  setMsg("Kayıt yapılıyor...");
+  setMsg(trEn("Kayıt yapılıyor...", "Creating account..."));
   const payload = {
     ad: document.getElementById("kayitAd").value.trim(),
     email: document.getElementById("kayitEmail").value.trim(),
@@ -129,11 +132,11 @@ formKayit.addEventListener("submit", async (e) => {
       body: JSON.stringify(payload)
     });
   } catch (err) {
-    setMsg(err.message || "Kayıt başarısız", true);
+    setMsg(err.message || trEn("Kayıt başarısız", "Registration failed"), true);
     return;
   }
 
-  setMsg("Kayıt başarılı. Lütfen email doğrulama linkine tıkla.");
+  setMsg(trEn("Kayıt başarılı. Lütfen email doğrulama linkine tıkla.", "Registration successful. Please click the email verification link."));
   setTab("giris");
 });
 
@@ -149,7 +152,7 @@ backToLoginBtn.addEventListener("click", () => {
 
 formForgot.addEventListener("submit", async (e) => {
   e.preventDefault();
-  setMsg("Sıfırlama maili gönderiliyor...");
+  setMsg(trEn("Sıfırlama maili gönderiliyor...", "Sending reset email..."));
 
   try {
     await apiFetch("/api/v1/auth/forgot-password", {
@@ -158,11 +161,11 @@ formForgot.addEventListener("submit", async (e) => {
       body: JSON.stringify({ email: document.getElementById("forgotEmail").value.trim() })
     });
   } catch (err) {
-    setMsg(err.message || "İşlem başarısız", true);
+    setMsg(err.message || trEn("İşlem başarısız", "Operation failed"), true);
     return;
   }
 
-  setMsg("Sıfırlama bağlantısı gönderildi (emailini kontrol et).");
+  setMsg(trEn("Sıfırlama bağlantısı gönderildi (emailini kontrol et).", "Reset link sent (check your email)."));
   formForgot.classList.add("hidden");
   formGiris.classList.remove("hidden");
 });
@@ -171,12 +174,12 @@ if (formReset) {
   formReset.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!resetToken) {
-      setResetMsg("Geçersiz bağlantı.", true);
+      setResetMsg(trEn("Geçersiz bağlantı.", "Invalid link."), true);
       return;
     }
 
     const yeniSifre = document.getElementById("resetPassword").value;
-    setResetMsg("Şifre güncelleniyor...");
+    setResetMsg(trEn("Şifre güncelleniyor...", "Updating password..."));
 
     try {
       await apiFetch("/api/v1/auth/reset-password", {
@@ -185,11 +188,11 @@ if (formReset) {
         body: JSON.stringify({ token: resetToken, yeniSifre })
       });
     } catch (err) {
-      setResetMsg(err.message || "Şifre güncellenemedi.", true);
+      setResetMsg(err.message || trEn("Şifre güncellenemedi.", "Password could not be updated."), true);
       return;
     }
 
-    setResetMsg("Şifren güncellendi. Giriş ekranına yönlendiriliyorsun...");
+    setResetMsg(trEn("Şifren güncellendi. Giriş ekranına yönlendiriliyorsun...", "Password updated. Redirecting to login..."));
     setTimeout(() => {
       window.location.href = "/auth.html";
     }, 1200);
@@ -201,7 +204,7 @@ tabKayit.addEventListener("click", () => setTab("kayit"));
 
 (async () => {
   if (params.get("verified") === "1") {
-    setMsg("Email doğrulandı, artık giriş yapabilirsin.");
+    setMsg(trEn("Email doğrulandı, artık giriş yapabilirsin.", "Email verified, you can now sign in."));
   }
 
   if (resetToken) {
@@ -213,12 +216,12 @@ tabKayit.addEventListener("click", () => setTab("kayit"));
       await apiFetch(`/api/v1/auth/verify-reset-token?token=${encodeURIComponent(resetToken)}`);
       tokenValid = true;
     } catch (err) {
-      setResetMsg(err.message || "Bağlantı geçersiz veya süresi dolmuş.", true);
+      setResetMsg(err.message || trEn("Bağlantı geçersiz veya süresi dolmuş.", "Link is invalid or expired."), true);
       formReset.classList.add("hidden");
     }
 
     if (tokenValid) {
-      setResetMsg("Yeni şifreni belirleyebilirsin.");
+      setResetMsg(trEn("Yeni şifreni belirleyebilirsin.", "You can set your new password."));
     }
     return;
   }

@@ -14,10 +14,14 @@ function pickByRollout(items) {
   return items[0];
 }
 
-async function resolvePrompt({ ruya, tip }) {
+async function resolvePrompt({ ruya, tip, lang = "tr" }) {
+  if (lang === "en") {
+    return { prompt: buildPrompt(ruya, tip, lang), version: "default-en" };
+  }
+
   const active = await PromptVersion.find({ tip, active: true }).sort({ createdAt: -1 });
   if (!active.length) {
-    return { prompt: buildPrompt(ruya, tip), version: "default" };
+    return { prompt: buildPrompt(ruya, tip, lang), version: "default" };
   }
 
   const selected = pickByRollout(active);

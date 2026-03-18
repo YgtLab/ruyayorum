@@ -1,22 +1,26 @@
-# Contributing Guide
+# Contributing Guide / Katkı Rehberi
 
-RüyaYorum'a katkı vermek istediğin için teşekkürler.
+TR: Katkıların için teşekkürler.  
+EN: Thanks for contributing.
 
-## Katkı Türleri
+## Contribution Types / Katkı Türleri
 
-- Bug düzeltme
-- Yeni özellik
+- Bug fix
+- Feature
 - Refactor
-- Dokümantasyon iyileştirmesi
-- Test kapsamı artırma
+- Documentation
+- Test improvements
 
-## Başlamadan Önce
+## Before You Start / Başlamadan Önce
 
-1. Issue aç veya mevcut issue altında çalışacağını belirt
-2. Yeni bir branch oluştur
-3. Değişikliği küçük ve odaklı tut
+1. TR: Issue aç veya mevcut issue’yu sahiplen.  
+   EN: Open an issue or claim an existing one.
+2. TR: Yeni bir branch oluştur.  
+   EN: Create a dedicated branch.
+3. TR: Değişikliği küçük ve odaklı tut.  
+   EN: Keep changes focused and small.
 
-## Lokal Kurulum
+## Local Setup / Lokal Kurulum
 
 ```bash
 cp .env.example .env
@@ -24,28 +28,27 @@ npm install
 npm run dev
 ```
 
-## Kod Standartları
+## Quality Checks / Kalite Kontrolleri
 
-- Değişiklikler mevcut mimari ve isimlendirme ile tutarlı olmalı
-- Geriye dönük kırılma yaratacak değişikliklerde migration notu eklenmeli
-- Güvenlik etkisi olan değişikliklerde risk notu bırakılmalı
+```bash
+npm run lint
+npm test
+```
 
-## PR Süreci
+TR/EN: PR açmadan önce bu iki komutun başarılı olması beklenir.
 
-1. PR başlığını net yaz
-2. Ne değişti / neden değişti kısa özetle
-3. Test adımlarını belirt
-4. UI değişikliği varsa ekran görüntüsü ekle
+## Pull Request Rules / PR Kuralları
 
-PR merge öncesi beklenenler:
+- TR: PR açıklaması net olsun (ne değişti / neden).  
+  EN: Keep PR description clear (what changed / why).
+- TR: Kırıcı değişiklik varsa özellikle belirt.  
+  EN: Explicitly mention breaking changes.
+- TR: UI değişikliği varsa ekran görüntüsü ekle.  
+  EN: Add screenshots for UI changes.
 
-- `npm run lint` başarılı
-- `npm test` başarılı
-- CI yeşil
+## Commit Convention
 
-## Commit Önerisi
-
-Conventional Commits tercih edilir:
+Preferred prefixes:
 
 - `feat:`
 - `fix:`
@@ -53,9 +56,3 @@ Conventional Commits tercih edilir:
 - `docs:`
 - `test:`
 - `chore:`
-
-Örnek:
-
-```text
-feat(auth): add recovery code regeneration endpoint
-```

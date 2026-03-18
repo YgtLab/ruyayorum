@@ -1,10 +1,13 @@
-function errorHandler(err, _req, res, _next) {
+const { t } = require("../utils/i18n");
+
+function errorHandler(err, req, res, _next) {
   const statusCode = err.statusCode || 500;
+  const baseMessage = err.message || "Sunucu hatası";
   const payload = {
     success: false,
     error: {
       code: err.code || "INTERNAL_ERROR",
-      message: err.message || "Sunucu hatası",
+      message: t(req, baseMessage),
       details: err.details || null
     }
   };

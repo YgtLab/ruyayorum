@@ -2,6 +2,7 @@ const ticketForm = document.getElementById("ticketForm");
 const ticketList = document.getElementById("ticketList");
 const ticketDetail = document.getElementById("ticketDetail");
 const toast = document.getElementById("toast");
+const trEn = (trText, enText) => window.I18N?.trEn?.(trText, enText) || trText;
 
 function showToast(message) {
   toast.textContent = message;
@@ -10,16 +11,18 @@ function showToast(message) {
 }
 
 async function apiFetch(url, options = {}, canRetry = true) {
-  const res = await fetch(url, { credentials: "include", ...options });
+  const headers = { ...(options.headers || {}), "X-Lang": window.I18N?.getLang?.() || "tr" };
+  const res = await fetch(url, { credentials: "include", ...options, headers });
   const data = await res.json().catch(() => ({}));
 
   if (res.status === 401 && canRetry) {
-    const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include" });
+    const refreshRes = await fetch("/api/v1/auth/refresh", { method: "POST", credentials: "include", headers: { "X-Lang": window.I18N?.getLang?.() || "tr" } });
     if (refreshRes.ok) return apiFetch(url, options, false);
   }
 
   if (!res.ok || data?.success === false) {
-    throw new Error(data?.error?.message || data?.error || "Sunucu hatası");
+    const rawMessage = data?.error?.message || data?.error || "Sunucu hatası";
+    throw new Error(window.I18N?.mapServerError?.(rawMessage) || rawMessage);
   }
 
   return data?.data ?? data;
@@ -28,7 +31,7 @@ async function apiFetch(url, options = {}, canRetry = true) {
 function ticketRow(t) {
   return `
     <article class="history-item" data-ticket="${t._id}">
-      <div class="history-meta">${new Date(t.updatedAt).toLocaleString("tr-TR")} · ${t.status} · ${t.priority}</div>
+      <div class="history-meta">${new Date(t.updatedAt).toLocaleString(window.I18N?.isEnglish?.() ? "en-US" : "tr-TR")} · ${t.status} · ${t.priority}</div>
       <div class="history-text">${t.subject}</div>
     </article>`;
 }
@@ -52,13 +55,13 @@ function renderDetail(t) {
       <p style="color:var(--muted);">Durum: ${t.status} · Öncelik: ${t.priority} · Kategori: ${t.category}</p>
       <div class="history-list">${messages}</div>
       <form id="replyForm" class="profile-form" style="margin-top:10px;">
-        <label>Yanıt
+        <label>${trEn("Yanıt", "Reply")}
           <textarea id="replyMessage" maxlength="1200" required></textarea>
         </label>
-        <label>Ek Dosya (opsiyonel)
+        <label>${trEn("Ek Dosya (opsiyonel)", "Attachment (optional)")}
           <input id="replyFiles" type="file" multiple />
         </label>
-        <button class="btn btn-secondary" type="submit">Yanıt Gönder</button>
+        <button class="btn btn-secondary" type="submit">${trEn("Yanıt Gönder", "Send Reply")}</button>
       </form>
     </article>
   `;
@@ -80,7 +83,7 @@ function renderDetail(t) {
       });
       await loadTicketDetail(t._id);
       await loadTickets();
-      showToast("Yanıt gönderildi.");
+      showToast(trEn("Yanıt gönderildi.", "Reply sent."));
     } catch (err) {
       showToast(err.message);
     }
@@ -92,7 +95,7 @@ async function loadTickets() {
   const tickets = data.tickets || [];
   ticketList.innerHTML = tickets.length
     ? tickets.map(ticketRow).join("")
-    : '<article class="history-item"><div class="history-text">Henüz ticket yok.</div></article>';
+    : `<article class="history-item"><div class="history-text">${trEn("Henüz ticket yok.", "No ticket yet.")}</div></article>`;
 }
 
 async function loadTicketDetail(id) {
@@ -127,7 +130,7 @@ ticketForm.addEventListener("submit", async (e) => {
     });
     ticketForm.reset();
     await loadTickets();
-    showToast("Ticket oluşturuldu.");
+    showToast(trEn("Ticket oluşturuldu.", "Ticket created."));
   } catch (err) {
     showToast(err.message);
   }

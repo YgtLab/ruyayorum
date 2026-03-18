@@ -1,34 +1,35 @@
-# Security Policy
+# Security Policy / Güvenlik Politikası
 
-## Supported Branch
+## Supported Branch / Desteklenen Dal
 
 - `main`
 
-## Güvenlik Açığı Bildirimi
+## Reporting a Vulnerability / Açık Bildirimi
 
-Public issue açmadan özel bildirim yap:
+TR: Public issue açmadan önce özel bildirim yap.  
+EN: Please report vulnerabilities privately before opening a public issue.
 
-- `iletisim@ruyayorum.app`
+- Contact/İletişim: `iletisim@ruyayorum.app`
 
-Raporunda şu bilgileri paylaş:
+Include / Rapora ekleyin:
 
-1. Etkilenen endpoint veya ekran
-2. Yeniden üretim adımları
-3. Beklenen davranış ve gerçekleşen davranış
-4. Olası etki seviyesi
+1. Affected endpoint/page (Etkilenen endpoint/ekran)
+2. Reproduction steps (Yeniden üretim adımları)
+3. Expected vs actual behavior (Beklenen/gerçek davranış)
+4. Impact level (Etki seviyesi)
 
-## Yanıt SLA (Hedef)
+## Response Targets / Yanıt Hedefleri
 
-- İlk geri dönüş: 72 saat
-- Kritik açık değerlendirmesi: 7 gün içinde
+- First response / İlk geri dönüş: 72 hours
+- Critical triage / Kritik değerlendirme: 7 days
 
-## Sorumlu Açıklama
+## Responsible Disclosure / Sorumlu Açıklama
 
-- Açık doğrulanmadan public paylaşım yapılmamalı
-- Düzeltme yayınlandıktan sonra sorumlu açıklama teşvik edilir
+TR: Açık doğrulanmadan public paylaşım yapılmamalı.  
+EN: Do not publicly disclose before validation and fix.
 
-## Güvenlik Notları
+## Security Notes / Güvenlik Notları
 
-- Public repo öncesi tüm secret değerleri rotate edilmelidir
-- `.env` dosyası asla repoya eklenmemelidir
-- Şüpheli login ve kimlik doğrulama olayları audit log ile izlenir
+- Rotate all secrets before public release.
+- Never commit `.env`.
+- Audit logs are used for sensitive account/admin actions.
