@@ -1,7 +1,7 @@
 {
   "name": "ruyayorum",
   "version": "1.0.0",
-  "description": "RüyaYorum: güvenli ve modern rüya yorum platformu (Node.js + Express + MongoDB)",
+  "description": "RüyaYorum: a secure and modern dream interpretation platform (Node.js + Express + MongoDB)",
   "license": "MIT",
   "author": "RüyaYorum Contributors",
   "engines": {
